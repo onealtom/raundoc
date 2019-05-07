@@ -1,0 +1,71 @@
+=== SPI Flash分区
+
+
+=== eMMC分区
+
+分区是在出厂烧写前完成，出厂后，不再变更，只在生产时运行一次。
+
+[source,bash]
+----
+$ sudo sfdisk /dev/*mmcblk1 << EOF
+,256M,83 <1>
+,256M,83 <2>
+,-,5     <3>
+,128M,83 <4>
+,128M,83 <5>
+,512M,83 <6>
+,512M,83 <7>
+,256M,83 <8>
+,256M,83 <9>
+,256M,83 <10>
+,256M,83 <11>
+,-,83    <12>
+EOF
+
+----
+<1> sys1
+<2> sys2
+<3> 扩展分区
+<4> opt1
+<5> opt2
+<6> nms1
+<7> nms2
+<8> 保留1
+<9> 保留2
+<10> 保留3
+<11> 保留4
+<12> 剩余
+
+执行分区脚本后，成功信息如下，每一颗eMMC具体容量不一定相同，大致为3.6GB。
+
+[source,bash]
+----
+Checking that no-one is using this disk right now ... OK
+
+Disk /dev/mmcblk1: 3.6 GiB, 3867148288 bytes, 7553024 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x28d1e477
+
+Device          Boot   Start     End Sectors  Size Id Type
+/dev/mmcblk1p1          2048  526335  524288  256M 83 Linux
+/dev/mmcblk1p2        526336 1050623  524288  256M 83 Linux
+/dev/mmcblk1p3       1050624 7553023 6502400  3.1G  5 Extended
+/dev/mmcblk1p5       1052672 1314815  262144  128M 83 Linux
+/dev/mmcblk1p6       1316864 1579007  262144  128M 83 Linux
+/dev/mmcblk1p7       1581056 2629631 1048576  512M 83 Linux
+/dev/mmcblk1p8       2631680 3680255 1048576  512M 83 Linux
+/dev/mmcblk1p9       3682304 4206591  524288  256M 83 Linux
+/dev/mmcblk1p10      4208640 4732927  524288  256M 83 Linux
+/dev/mmcblk1p11      4734976 5259263  524288  256M 83 Linux
+/dev/mmcblk1p12      5261312 5785599  524288  256M 83 Linux
+/dev/mmcblk1p13      5787648 7553023 1765376  862M 83 Linux
+
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+[ 3573.411044]  mmcblk1: p1 p2 p3 < p5 p6 p7 p8 p9 p10 p11 p12 p13 >
+Syncing disks.
+----
+
